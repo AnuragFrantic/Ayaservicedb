@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose')
-const triquity = require("./controllers/Triquity");
+
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const PDFDocument = require("pdfkit");
@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
 
 mongoose.set('strictQuery', false)
 const connect = async () => {
+
     try {
         await mongoose.connect(process.env.MONGO_URL, {
             useNewUrlParser: true,
