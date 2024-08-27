@@ -14,8 +14,6 @@ const multer = require('multer');
 
 
 
-
-
 // working image upload code
 
 var storage = multer.diskStorage({
