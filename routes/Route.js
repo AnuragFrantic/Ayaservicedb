@@ -161,6 +161,7 @@ router.delete('/customerreg/:id', deleteCustomerRegEntryById);
 
 router.post('/booking', createBookingEntry)
 
+
 router.get('/booking', getAllBooking)
 
 
