@@ -149,6 +149,7 @@ router.put('/customerreg/:id', upload, updateCustomerRegEntryById);
 
 router.put('/updateCustomerBill', updateCustomerBill);
 
+
 // router.put('/customerreg/:id', updateCustomerRegEntryBy);
 
 
