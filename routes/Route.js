@@ -82,7 +82,7 @@ router.post('/ayareg', upload, createAyaRegEntry)
 router.get('/ayareg/:id', getAyaRegEntryById);
 
 // PUT /ayareg/:id - Update an AyaReg entry by ID
-router.put('/ayareg/:id', updateAyaRegEntryById);
+router.put('/ayareg/:id', upload, updateAyaRegEntryById);
 
 router.put('/updateAyaBill', updateAyaBill);
 
@@ -145,7 +145,7 @@ router.post('/customerreg', upload, createCustomerRegEntry);
 router.get('/customerreg/:id', getCustomerRegEntryById);
 
 
-router.put('/customerreg/:id', updateCustomerRegEntryById);
+router.put('/customerreg/:id', upload, updateCustomerRegEntryById);
 
 router.put('/updateCustomerBill', updateCustomerBill);
 

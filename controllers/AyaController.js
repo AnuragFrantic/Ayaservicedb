@@ -344,9 +344,110 @@ exports.updateAssignedDetail = async function (req, res) {
 
 
 
+// exports.updateAyaRegEntryById = async (req, res) => {
+//     const id = req.params.id;
+//     const updateData = { $set: req.body };
+//     if (req.body.paymentPendingAmount || req.body.paymentBalance || req.body.paymentstatus || req.body.paymentLeaveTaken || req.body.paymentWorkingDays || req.body.paymentAmountReceived || req.body.paymentCustomerPurpose || req.body.paymentCustomerAssigned || req.body.paymentBill || req.body.paymentToDate || req.body.paymentFromDate || req.body.paymentRate) {
+//         updateData.$push = {
+//             ayaPaymentDetails: {
+//                 paymentBill: req.body.paymentBill,
+//                 paymentAmountReceived: req.body.paymentAmountReceived,
+//                 paymentFromDate: req.body.paymentFromDate,
+//                 paymentToDate: req.body.paymentToDate,
+//                 paymentCustomerAssigned: req.body.paymentCustomerAssigned,
+//                 paymentRate: req.body.paymentRate,
+//                 paymentCustomerPurpose: req.body.paymentCustomerPurpose,
+//                 paymentLeaveTaken: req.body.paymentLeaveTaken,
+//                 paymentWorkingDays: req.body.paymentWorkingDays,
+//                 paymentstatus: req.body.paymentstatus,
+//                 paymentBalance: req.body.paymentBalance,
+//                 // paymentPendingAmount
+//                 paymentPendingAmount: req.body.paymentPendingAmount,
+//             },
+//         };
+//     }
+//     else if (req.body.assignedCustomerPurpose || req.body.assignedCustomerShift || req.body.assignedCustomerRate || req.body.assignedCustomerReason || req.body.assignedCustomerToDate || req.body.assignedCustomerFromDate || req.body.assignedCustomerName || req.body.assignedCustomerCode) {
+//         updateData.$push = {
+//             assignedCustomerDetails: {
+//                 assignedCustomerCode: req.body.assignedCustomerCode,
+//                 assignedCustomerName: req.body.assignedCustomerName,
+//                 assignedCustomerFromDate: req.body.assignedCustomerFromDate,
+//                 assignedCustomerToDate: req.body.assignedCustomerToDate,
+//                 assignedCustomerReason: req.body.assignedCustomerReason,
+//                 assignedCustomerRate: req.body.assignedCustomerRate,
+//                 assignedCustomerShift: req.body.assignedCustomerShift,
+//                 assignedCustomerPurpose: req.body.assignedCustomerPurpose,
+//             },
+//         }
+//     }
+//     else if (req.body.generatedSerialNo || req.body.generatedLeaveTaken || req.body.generatedWorkingDays || req.body.generatedAmountPaid || req.body.generatedCustomerPurpose || req.body.generatedBill || req.body.generatedTime || req.body.generatedToDate || req.body.generatedFromDate || req.body.generatedRate || req.body.generatedAyaId) {
+//         updateData.$push = {
+//             ayaGeneratedInvoice: {
+//                 // generatedSerialNo : req.body.generatedSerialNo,
+//                 generatedAyaId: req.body.generatedAyaId,
+//                 generatedTime: req.body.generatedTime,
+//                 generatedBill: req.body.generatedBill,
+//                 generatedToDate: req.body.generatedToDate,
+//                 generatedFromDate: req.body.generatedFromDate,
+//                 generatedRate: req.body.generatedRate,
+//                 generatedCustomerAssigned: req.body.generatedCustomerAssigned,
+//                 generatedCustomerPurpose: req.body.generatedCustomerPurpose,
+//                 generatedAmountReceived: req.body.generatedAmountPaid,
+//                 generatedWorkingDays: req.body.generatedWorkingDays,
+//                 generatedLeaveTaken: req.body.generatedLeaveTaken,
+
+//             },
+//         };
+//     }
+
+//     else if (req.body.pendingAmount) {
+//         updateData.$push = {
+//             pendingAmount: req.body.pendingAmount
+//         }
+//     }
+
+//     try {
+//         const updatedEntry = await AyaReg.findByIdAndUpdate(
+//             id,
+//             updateData,
+//             { new: true }
+//         );
+
+//         if (!updatedEntry) {
+//             return res.status(404).json({ error: 'Entry not found' });
+//         }
+
+//         res.status(200).json({ success: true, message: 'Successfully updated', data: updatedEntry });
+//     } catch (err) {
+//         res.status(500).json({ success: false, message: 'Failed to update' });
+//     }
+// };
+
+
 exports.updateAyaRegEntryById = async (req, res) => {
     const id = req.params.id;
-    const updateData = { $set: req.body };
+    let updateData = { $set: req.body };
+
+    // Check if new file uploads are provided and update the fields
+    if (req.files) {
+        // Update file if a new one is uploaded
+
+        if (req.files.file && req.files.file.length > 0) {
+            updateData = { ...updateData, ['file']: req.files.file[0].path };
+        }
+
+        // Update aadharCardImage if a new one is uploaded
+        if (req.files.aadharCardImage && req.files.aadharCardImage.length > 0) {
+            updateData = { ...updateData, ['aadharCardImage']: req.files.aadharCardImage[0].path };
+        }
+
+        // Update idCardImage if a new one is uploaded
+        if (req.files.idCardImage && req.files.idCardImage.length > 0) {
+            updateData = { ...updateData, ['idCardImage']: req.files.idCardImage[0].path };
+        }
+    }
+
+    // Handle pushing data to arrays if relevant fields are provided
     if (req.body.paymentPendingAmount || req.body.paymentBalance || req.body.paymentstatus || req.body.paymentLeaveTaken || req.body.paymentWorkingDays || req.body.paymentAmountReceived || req.body.paymentCustomerPurpose || req.body.paymentCustomerAssigned || req.body.paymentBill || req.body.paymentToDate || req.body.paymentFromDate || req.body.paymentRate) {
         updateData.$push = {
             ayaPaymentDetails: {
@@ -361,12 +462,10 @@ exports.updateAyaRegEntryById = async (req, res) => {
                 paymentWorkingDays: req.body.paymentWorkingDays,
                 paymentstatus: req.body.paymentstatus,
                 paymentBalance: req.body.paymentBalance,
-                // paymentPendingAmount
                 paymentPendingAmount: req.body.paymentPendingAmount,
             },
         };
-    }
-    else if (req.body.assignedCustomerPurpose || req.body.assignedCustomerShift || req.body.assignedCustomerRate || req.body.assignedCustomerReason || req.body.assignedCustomerToDate || req.body.assignedCustomerFromDate || req.body.assignedCustomerName || req.body.assignedCustomerCode) {
+    } else if (req.body.assignedCustomerPurpose || req.body.assignedCustomerShift || req.body.assignedCustomerRate || req.body.assignedCustomerReason || req.body.assignedCustomerToDate || req.body.assignedCustomerFromDate || req.body.assignedCustomerName || req.body.assignedCustomerCode) {
         updateData.$push = {
             assignedCustomerDetails: {
                 assignedCustomerCode: req.body.assignedCustomerCode,
@@ -378,12 +477,10 @@ exports.updateAyaRegEntryById = async (req, res) => {
                 assignedCustomerShift: req.body.assignedCustomerShift,
                 assignedCustomerPurpose: req.body.assignedCustomerPurpose,
             },
-        }
-    }
-    else if (req.body.generatedSerialNo || req.body.generatedLeaveTaken || req.body.generatedWorkingDays || req.body.generatedAmountPaid || req.body.generatedCustomerPurpose || req.body.generatedBill || req.body.generatedTime || req.body.generatedToDate || req.body.generatedFromDate || req.body.generatedRate || req.body.generatedAyaId) {
+        };
+    } else if (req.body.generatedSerialNo || req.body.generatedLeaveTaken || req.body.generatedWorkingDays || req.body.generatedAmountPaid || req.body.generatedCustomerPurpose || req.body.generatedBill || req.body.generatedTime || req.body.generatedToDate || req.body.generatedFromDate || req.body.generatedRate || req.body.generatedAyaId) {
         updateData.$push = {
             ayaGeneratedInvoice: {
-                // generatedSerialNo : req.body.generatedSerialNo,
                 generatedAyaId: req.body.generatedAyaId,
                 generatedTime: req.body.generatedTime,
                 generatedBill: req.body.generatedBill,
@@ -395,15 +492,12 @@ exports.updateAyaRegEntryById = async (req, res) => {
                 generatedAmountReceived: req.body.generatedAmountPaid,
                 generatedWorkingDays: req.body.generatedWorkingDays,
                 generatedLeaveTaken: req.body.generatedLeaveTaken,
-
             },
         };
-    }
-
-    else if (req.body.pendingAmount) {
+    } else if (req.body.pendingAmount) {
         updateData.$push = {
-            pendingAmount: req.body.pendingAmount
-        }
+            pendingAmount: req.body.pendingAmount,
+        };
     }
 
     try {
@@ -419,10 +513,10 @@ exports.updateAyaRegEntryById = async (req, res) => {
 
         res.status(200).json({ success: true, message: 'Successfully updated', data: updatedEntry });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ success: false, message: 'Failed to update' });
     }
 };
-
 
 
 
